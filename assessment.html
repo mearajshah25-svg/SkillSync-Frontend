@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Career Assessment Pro</title>
+</head>
+
+<body style="margin:0; font-family:'Segoe UI',sans-serif; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); color:white;">
+
+<div style="max-width:900px; margin:30px auto; padding:30px; background:rgba(255,255,255,0.05); border-radius:20px; backdrop-filter:blur(15px); min-height: 500px;">
+
+    <h2 style="text-align:center;">🚀 Smart Career Assessment</h2>
+
+    <div style="height:10px; background:rgba(255,255,255,0.2); border-radius:10px; margin:20px 0;">
+        <div id="progress" style="height:100%; width:25%; background:linear-gradient(90deg,#00c6ff,#0072ff); border-radius:10px; transition: 0.4s;"></div>
+    </div>
+
+    <div id="questions-container"></div>
+
+    <div id="nav-buttons" style="display:flex; justify-content: space-between; margin-top:30px;">
+        <button id="backBtn" onclick="prevStep()" class="btn" style="width:45%; background:#444; display:none;">← Back</button>
+        <button id="nextBtn" onclick="nextStep()" class="btn" style="width:100%;" disabled>Next →</button>
+    </div>
+
+</div>
+
+<style>
+    .btn { padding:12px; border:none; border-radius:10px; cursor:pointer; color:white; font-weight:bold; transition: 0.3s; }
+    .btn:disabled { background:#222 !important; cursor:not-allowed; opacity:0.4; }
+    .btn:not(:disabled) { background:#00c6ff; }
+    .btn:hover:not(:disabled) { background:#0072ff; transform: translateY(-2px); }
+    
+    .q-box { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .card { padding:10px 15px; margin:5px; border-radius:8px; background:rgba(255,255,255,0.1); cursor:pointer; display:inline-block; transition: 0.2s; border:1px solid transparent; }
+    .selected { background:#00c6ff !important; border-color: white; }
+    
+    .input-field { width:90%; padding:12px; margin-top:8px; border-radius:8px; border:none; background:rgba(255,255,255,0.9); color:#333; outline: none; }
+    .scale-btn { margin:5px; width:40px; height:40px; border:none; border-radius:50%; cursor:pointer; background:rgba(255,255,255,0.1); color:white; }
+
+    /* ✅ NEW: Spinner animation */
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<script>
+    const masterBank = {
+        interests: [
+            "I enjoy solving complex logical puzzles", "I like designing visual graphics",
+            "I enjoy analyzing financial data", "I like mentoring others", 
+            "I enjoy building physical prototypes", "I like researching scientific phenomena"
+        ],
+        aptitude: [
+            { q: "Find next: 2, 6, 7, 21, 22, ?", id: "apt1" },
+            { q: "If 5 machines make 5 items in 5 min, how long for 100 machines to make 100 items?", id: "apt2" },
+            { q: "Which is the odd one out: Cube, Sphere, Triangle, Pyramid?", id: "apt3" },
+            { q: "If A=1, B=2, what is the sum of 'DOG'?", id: "apt4" },
+            { q: "Complete the sequence: 1, 4, 9, 16, 25, ?", id: "apt5" }
+        ],
+        personality: [
+            { q: "In a group, you prefer to:", opts: ["Lead", "Support", "Observe", "Mediate"], id: "p1" },
+            { q: "You prefer working environments that are:", opts: ["Fast-paced", "Quiet", "Collaborative", "Structured"], id: "p2" },
+            { q: "When facing a hurdle, you first:", opts: ["Analyze", "Act", "Consult", "Brainstorm"], id: "p3" },
+            { q: "You describe yourself more as:", opts: ["Creative", "Logical", "Practical", "Empathetic"], id: "p4" },
+            { q: "Do you enjoy predictable routines?", opts: ["Always", "Sometimes", "Never"], id: "p5" }
+        ],
+        academic: [
+            { q: "Which subject is most interesting?", opts: ["Physics", "History", "Business", "Art"], id: "a1" },
+            { q: "Fastest question type for you:", opts: ["Calculations", "Essays", "Case Studies", "Diagrams"], id: "a2" },
+            { q: "Favorite learning method:", opts: ["Hands-on", "Reading", "Visual", "Listening"], id: "a3" },
+            { q: "Which task is most rewarding?", opts: ["Experimenting", "Writing", "Problem-solving", "Presenting"], id: "a4" },
+            { q: "Preferred work output:", opts: ["Code", "Reports", "Artistic Work", "Plans"], id: "a5" }
+        ]
+    };
+
+    const activeQuestions = {
+        interests: [...masterBank.interests].sort(() => 0.5 - Math.random()).slice(0, 5),
+        personality: [...masterBank.personality].sort(() => 0.5 - Math.random()).slice(0, 5),
+        aptitude: [...masterBank.aptitude].sort(() => 0.5 - Math.random()).slice(0, 5),
+        academic: [...masterBank.academic].sort(() => 0.5 - Math.random()).slice(0, 5)
+    };
+
+    let currentStep = 1;
+    const totalSteps = 4;
+    let selections = {}; 
+
+    function renderStep() {
+        const container = document.getElementById('questions-container');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        container.innerHTML = "";
+        backBtn.style.display = currentStep === 1 ? 'none' : 'block';
+        nextBtn.style.width = currentStep === 1 ? '100%' : '45%';
+        nextBtn.innerText = currentStep === totalSteps ? "Get Recommendation 🚀" : "Next →";
+
+        let html = "";
+        if (currentStep === 1) {
+            html = "<h3>🎯 Interest Assessment</h3>";
+            activeQuestions.interests.forEach((q, i) => {
+                const qId = `int_${i}`;
+                html += `<div class="q-box"><p>${q}</p><div class="scale" data-id="${qId}">`;
+                for(let n=1; n<=5; n++) {
+                    let selClass = selections[qId] == n ? 'selected' : '';
+                    html += `<button class="scale-btn ${selClass}" onclick="saveScale('${qId}', ${n}, this)">${n}</button>`;
+                }
+                html += `</div></div>`;
+            });
+        } 
+        else if (currentStep === 2) {
+            html = "<h3>🎭 Personality</h3>";
+            activeQuestions.personality.forEach(q => {
+                html += `<div class="q-box"><p>${q.q}</p><div class="options" data-id="${q.id}">`;
+                q.opts.forEach(opt => {
+                    let selClass = selections[q.id] == opt ? 'selected' : '';
+                    html += `<div class="card ${selClass}" onclick="saveCard('${q.id}', '${opt}', this)">${opt}</div>`;
+                });
+                html += `</div></div>`;
+            });
+        }
+        else if (currentStep === 3) {
+            html = "<h3>🧠 Aptitude</h3>";
+            activeQuestions.aptitude.forEach(q => {
+                let val = selections[q.id] || "";
+                html += `<div class="q-box"><p>${q.q}</p><input class="input-field" value="${val}" oninput="saveInput('${q.id}', this.value)" placeholder="Type answer..."></div>`;
+            });
+        }
+        else if (currentStep === 4) {
+            html = "<h3>📚 Academic Inclination</h3>";
+            activeQuestions.academic.forEach(q => {
+                html += `<div class="q-box"><p>${q.q}</p><div class="options" data-id="${q.id}">`;
+                q.opts.forEach(opt => {
+                    let selClass = selections[q.id] == opt ? 'selected' : '';
+                    html += `<div class="card ${selClass}" onclick="saveCard('${q.id}', '${opt}', this)">${opt}</div>`;
+                });
+                html += `</div></div>`;
+            });
+        }
+
+        container.innerHTML = html;
+        updateProgress();
+        validate();
+    }
+
+    function saveScale(id, val, el) {
+        selections[id] = val;
+        el.parentElement.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        validate();
+    }
+
+    function saveCard(id, val, el) {
+        selections[id] = val;
+        el.parentElement.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        validate();
+    }
+
+    function saveInput(id, val) {
+        selections[id] = val;
+        validate();
+    }
+
+    function validate() {
+        let currentQuestions = [];
+        if(currentStep === 1) currentQuestions = activeQuestions.interests.map((_, i) => `int_${i}`);
+        if(currentStep === 2) currentQuestions = activeQuestions.personality.map(q => q.id);
+        if(currentStep === 3) currentQuestions = activeQuestions.aptitude.map(q => q.id);
+        if(currentStep === 4) currentQuestions = activeQuestions.academic.map(q => q.id);
+
+        const allAnswered = currentQuestions.every(id => selections[id] && selections[id].toString().trim() !== "");
+        document.getElementById('nextBtn').disabled = !allAnswered;
+    }
+
+    function nextStep() {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            renderStep();
+        } else {
+
+            // ✅ NEW: Show loading spinner on button
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = `<span style="display:inline-flex; align-items:center; justify-content:center; gap:10px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                     style="animation: spin 0.8s linear infinite;">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+                Analyzing your profile...
+            </span>`;
+
+            const basicData = JSON.parse(localStorage.getItem("careerReport")) || {};
+
+            const finalPayload = {
+                ...basicData,
+                assessment_answers: selections
+            };
+
+            fetch("https://skillsync-backend-1-9ukd.onrender.com", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(finalPayload)
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                const formatted = data.report
+                    .replace(/# (.*?)<br>/g, '<h1 style="color:#fff;font-size:26px;margin:24px 0 10px;font-family:Segoe UI;">$1</h1>')
+                    .replace(/## (.*?)<br>/g, '<h2 style="color:#00c6ff;font-size:20px;margin:20px 0 8px;border-bottom:1px solid rgba(0,198,255,0.3);padding-bottom:6px;">$1</h2>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#e2e8f0;">$1</strong>')
+                    .replace(/• /g, '<span style="color:#00c6ff;">• </span>')
+                    .replace(/\d\. /g, (m) => `<span style="color:#00c6ff;font-weight:bold;">${m}</span>`);
+
+                document.body.innerHTML = `
+                    <div style="min-height:100vh; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); padding:40px 20px;">
+                        <div style="max-width:800px; margin:0 auto; background:rgba(255,255,255,0.05); border-radius:20px; padding:40px; backdrop-filter:blur(15px);">
+                            <h2 style="text-align:center; font-size:28px; color:white; margin-bottom:30px;">🎯 Your Career Recommendation</h2>
+                            <div style="font-size:16px; line-height:1.9; color:#cbd5e1; text-align:left;">
+                                ${formatted}
+                            </div>
+                            <div style="text-align:center; margin-top:40px;">
+                                <a href="index1.html" style="display:inline-block; padding:14px 32px; background:linear-gradient(90deg,#00c6ff,#0072ff); color:white; border-radius:12px; text-decoration:none; font-weight:bold; font-size:16px;">
+                                    🏠 Back to Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            })
+            .catch(err => {
+                // ✅ Reset button if error occurs
+                nextBtn.disabled = false;
+                nextBtn.innerText = "Get Recommendation 🚀";
+                alert("Backend error. Check FastAPI.");
+                console.error(err);
+            });
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            currentStep--;
+            renderStep();
+        }
+    }
+
+    function updateProgress() {
+        document.getElementById('progress').style.width = (currentStep / totalSteps) * 100 + '%';
+    }
+
+    renderStep();
+</script>
+
+</body>
+</html>

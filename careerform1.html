@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSync - Career Discovery</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#258cf4",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: #080f1a;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .display {
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* Animated background */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(37,140,244,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(37,140,244,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+        }
+
+        .bg-glow-1 {
+            position: fixed;
+            top: -200px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37,140,244,0.12) 0%, transparent 70%);
+            z-index: 0;
+            animation: drift1 12s ease-in-out infinite;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            bottom: -200px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%);
+            z-index: 0;
+            animation: drift2 15s ease-in-out infinite;
+        }
+
+        @keyframes drift1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(40px, 60px); }
+        }
+        @keyframes drift2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-50px, -40px); }
+        }
+
+        /* Glass card */
+        .glass {
+            background: rgba(15, 28, 50, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(37,140,244,0.15);
+            border-radius: 24px;
+        }
+
+        /* Step indicator */
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transition: all 0.4s ease;
+        }
+        .step-dot.active {
+            background: #258cf4;
+            box-shadow: 0 0 10px rgba(37,140,244,0.6);
+            width: 28px;
+            border-radius: 5px;
+        }
+        .step-dot.done {
+            background: rgba(37,140,244,0.4);
+        }
+
+        /* Custom input styling */
+        .field-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .field-wrapper label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64a0d4;
+            margin-bottom: 8px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .field-wrapper input,
+        .field-wrapper select,
+        .field-wrapper textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(37,140,244,0.2);
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+            appearance: none;
+        }
+
+        .field-wrapper input::placeholder,
+        .field-wrapper textarea::placeholder {
+            color: rgba(148,163,184,0.4);
+        }
+
+        .field-wrapper input:focus,
+        .field-wrapper select:focus,
+        .field-wrapper textarea:focus {
+            border-color: rgba(37,140,244,0.6);
+            background: rgba(37,140,244,0.06);
+            box-shadow: 0 0 0 3px rgba(37,140,244,0.1);
+        }
+
+        .field-wrapper select option {
+            background: #0f1c32;
+            color: #e2e8f0;
+        }
+
+        /* Multi-select tags */
+        .tag-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            border-radius: 100px;
+            border: 1px solid rgba(37,140,244,0.25);
+            background: rgba(37,140,244,0.05);
+            color: #94a3b8;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+
+        .tag:hover {
+            border-color: rgba(37,140,244,0.5);
+            color: #e2e8f0;
+        }
+
+        .tag.selected {
+            background: rgba(37,140,244,0.2);
+            border-color: #258cf4;
+            color: #93c5fd;
+            box-shadow: 0 0 8px rgba(37,140,244,0.2);
+        }
+
+        /* Step panels */
+        .step-panel {
+            display: none;
+            animation: fadeSlide 0.4s ease forwards;
+        }
+        .step-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Submit button */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #258cf4, #0ea5e9);
+            color: white;
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(37,140,244,0.35);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn-primary:hover::before { opacity: 1; }
+
+        .btn-secondary {
+            padding: 14px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+            color: #e2e8f0;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(8,15,26,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 56px;
+            height: 56px;
+            border: 3px solid rgba(37,140,244,0.2);
+            border-top-color: #258cf4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Nav */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(8,15,26,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Character counter */
+        .char-count {
+            font-size: 11px;
+            color: rgba(148,163,184,0.5);
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            height: 2px;
+            background: rgba(255,255,255,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #258cf4, #06b6d4);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(37,140,244,0.5);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="font-family:'Syne',sans-serif; color:#93c5fd; font-size:18px; font-weight:600;">Analyzing your profile...</p>
+    <p style="color:#475569; font-size:14px;">Taking you to the assessment</p>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="index1.html" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+        <div style="width:36px; height:36px; background:#258cf4; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            <span class="material-symbols-outlined" style="color:white; font-size:20px;">sync_alt</span>
+        </div>
+        <span style="font-family:'Syne',sans-serif; font-weight:800; font-size:20px; color:white;">SkillSync</span>
+    </a>
+    <div style="display:flex; align-items:center; gap:24px;">
+        <a href="index1.html" style="color:#64748b; font-size:14px; font-weight:500; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">Home</a>
+        <a href="features.html" style="color:#64748b; font-size:14px; font-weight:500; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">Features</a>
+        <a href="about.html" style="color:#64748b; font-size:14px; font-weight:500; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">About</a>
+    </div>
+</nav>
+
+<!-- Progress bar -->
+<div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:33%"></div>
+</div>
+
+<!-- Main content -->
+<div style="position:relative; z-index:1; min-height:calc(100vh - 73px); display:flex; align-items:center; justify-content:center; padding:40px 20px;">
+
+    <div style="width:100%; max-width:580px;">
+
+        <!-- Header -->
+        <div style="text-align:center; margin-bottom:40px;">
+            <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 16px; border-radius:100px; background:rgba(37,140,244,0.1); border:1px solid rgba(37,140,244,0.2); margin-bottom:20px;">
+                <span class="material-symbols-outlined" style="color:#258cf4; font-size:16px;">rocket_launch</span>
+                <span style="font-family:'Syne',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.1em; color:#258cf4; text-transform:uppercase;">Career Discovery</span>
+            </div>
+            <h1 style="font-family:'Syne',sans-serif; font-size:36px; font-weight:800; color:white; margin:0 0 12px; line-height:1.2;">
+                Tell us about <span style="color:#258cf4;">yourself</span>
+            </h1>
+            <p style="color:#64748b; font-size:16px; margin:0;">We'll use this to personalize your career assessment</p>
+        </div>
+
+        <!-- Step indicators -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:36px;">
+            <div class="step-dot active" id="dot1"></div>
+            <div class="step-dot" id="dot2"></div>
+            <div class="step-dot" id="dot3"></div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="glass" style="padding:36px;">
+
+            <!-- STEP 1: Basic Info -->
+            <div class="step-panel active" id="step1">
+                <h2 style="font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:white; margin:0 0 6px;">Basic Information</h2>
+                <p style="color:#64748b; font-size:14px; margin:0 0 28px;">Let's start with who you are</p>
+
+                <div class="field-wrapper">
+                    <label>Your Name</label>
+                    <input type="text" id="name" placeholder="e.g. Arya Chandrakhede" maxlength="60">
+                </div>
+
+                <div class="field-wrapper">
+                    <label>Education Level</label>
+                    <div style="position:relative;">
+                        <select id="education">
+                            <option value="">Select your current level</option>
+                            <option>High School</option>
+                            <option>Undergraduate</option>
+                            <option>Postgraduate</option>
+                            <option>Doctorate</option>
+                        </select>
+                        <span class="material-symbols-outlined" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#64748b; font-size:20px; pointer-events:none;">expand_more</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="goToStep(2)">
+                    Continue
+                    <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+                </button>
+            </div>
+
+            <!-- STEP 2: Skills & Interests -->
+            <div class="step-panel" id="step2">
+                <h2 style="font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:white; margin:0 0 6px;">Skills & Interests</h2>
+                <p style="color:#64748b; font-size:14px; margin:0 0 28px;">What are you good at and passionate about?</p>
+
+                <div class="field-wrapper">
+                    <label>Your Skills</label>
+                    <input type="text" id="skills" placeholder="e.g. Python, Machine Learning, UI Design">
+                    <p style="font-size:12px; color:#475569; margin:6px 0 0;">Separate skills with commas</p>
+                </div>
+
+                <div class="field-wrapper">
+                    <label>Your Interests</label>
+                    <div class="tag-grid" id="interestTags">
+                        <div class="tag" onclick="toggleTag(this, 'Artificial Intelligence')">🤖 AI / ML</div>
+                        <div class="tag" onclick="toggleTag(this, 'Web Development')">🌐 Web Dev</div>
+                        <div class="tag" onclick="toggleTag(this, 'Data Science')">📊 Data Science</div>
+                        <div class="tag" onclick="toggleTag(this, 'Startups')">🚀 Startups</div>
+                        <div class="tag" onclick="toggleTag(this, 'Research')">🔬 Research</div>
+                        <div class="tag" onclick="toggleTag(this, 'Design')">🎨 Design</div>
+                        <div class="tag" onclick="toggleTag(this, 'Finance')">💹 Finance</div>
+                        <div class="tag" onclick="toggleTag(this, 'Cybersecurity')">🔐 Cybersecurity</div>
+                        <div class="tag" onclick="toggleTag(this, 'Cloud Computing')">☁️ Cloud</div>
+                        <div class="tag" onclick="toggleTag(this, 'Gaming')">🎮 Gaming</div>
+                    </div>
+                    <input type="hidden" id="interests">
+                    <p style="font-size:12px; color:#475569; margin:10px 0 0;">Select all that apply</p>
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <button class="btn-secondary" onclick="goToStep(1)">
+                        <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+                        Back
+                    </button>
+                    <button class="btn-primary" onclick="goToStep(3)" style="flex:1;">
+                        Continue
+                        <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Goals -->
+            <div class="step-panel" id="step3">
+                <h2 style="font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:white; margin:0 0 6px;">Career Goals</h2>
+                <p style="color:#64748b; font-size:14px; margin:0 0 28px;">Where do you see yourself in the future?</p>
+
+                <div class="field-wrapper">
+                    <label>Describe your goals</label>
+                    <textarea id="goals" rows="5" placeholder="e.g. I want to become an AI researcher and build solutions that help people in healthcare. I'm passionate about solving real-world problems with data..." maxlength="600" oninput="updateCharCount(this)"></textarea>
+                    <div class="char-count"><span id="charCount">0</span> / 600</div>
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <button class="btn-secondary" onclick="goToStep(2)">
+                        <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+                        Back
+                    </button>
+                    <button class="btn-primary" id="submitBtn" onclick="submitForm()" style="flex:1;">
+                        <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>
+                        Start Assessment
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer note -->
+        <p style="text-align:center; color:#334155; font-size:13px; margin-top:24px;">
+            Your data is used only to personalize your career guidance
+        </p>
+
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const selectedInterests = new Set();
+
+    function goToStep(step) {
+        // Validate current step before moving forward
+        if (step > currentStep) {
+            if (currentStep === 1) {
+                const name = document.getElementById('name').value.trim();
+                const education = document.getElementById('education').value;
+                if (!name) { shake('name'); return; }
+                if (!education) { shake('education'); return; }
+            }
+            if (currentStep === 2) {
+                const skills = document.getElementById('skills').value.trim();
+                if (!skills) { shake('skills'); return; }
+                if (selectedInterests.size === 0) {
+                    alert('Please select at least one interest!');
+                    return;
+                }
+            }
+        }
+
+        // Hide current step
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`dot${currentStep}`).classList.remove('active');
+        document.getElementById(`dot${currentStep}`).classList.add('done');
+
+        currentStep = step;
+
+        // Show new step
+        document.getElementById(`step${currentStep}`).classList.add('active');
+        document.getElementById(`dot${currentStep}`).classList.add('active');
+
+        // Update progress bar
+        const progress = (currentStep / 3) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleTag(el, value) {
+        if (selectedInterests.has(value)) {
+            selectedInterests.delete(value);
+            el.classList.remove('selected');
+        } else {
+            selectedInterests.add(value);
+            el.classList.add('selected');
+        }
+        document.getElementById('interests').value = [...selectedInterests].join(', ');
+    }
+
+    function updateCharCount(el) {
+        document.getElementById('charCount').textContent = el.value.length;
+    }
+
+    function shake(fieldId) {
+        const el = document.getElementById(fieldId);
+        el.style.borderColor = '#ef4444';
+        el.style.animation = 'shake 0.4s ease';
+        setTimeout(() => {
+            el.style.borderColor = '';
+            el.style.animation = '';
+        }, 800);
+    }
+
+    async function submitForm() {
+        const goals = document.getElementById('goals').value.trim();
+        if (!goals) { shake('goals'); return; }
+
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            education: document.getElementById('education').value,
+            skills: document.getElementById('skills').value.trim(),
+            interests: document.getElementById('interests').value,
+            goals: goals
+        };
+
+        // Show loading
+        document.getElementById('loadingOverlay').classList.add('active');
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/generate-career", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Save everything to localStorage for the assessment page
+                localStorage.setItem("careerReport", JSON.stringify({
+                    ...formData,
+                    initial_advice: data.career_advice
+                }));
+
+                // Redirect to assessment
+                window.location.href = "assessment.html";
+            } else {
+                throw new Error(data.detail || "Something went wrong");
+            }
+
+        } catch (error) {
+            document.getElementById('loadingOverlay').classList.remove('active');
+            alert("❌ Backend not reachable. Make sure FastAPI is running at port 8000.");
+            console.error(error);
+        }
+    }
+
+    // Shake animation keyframes via JS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SkillSync - Desktop Features Grid</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6",
+              ocean: {
+                950: "#020617",
+                900: "#082f49",
+                800: "#075985",
+                700: "#0369a1",
+              },
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 20%, #082f49 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, #0369a1 0%, transparent 40%),
+                        #020617;
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(15, 23, 42, 0.6);
+        }::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 6px;
+            border: 3px solid #020617;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-slate-100 antialiased">
+<header class="sticky top-0 z-50 backdrop-blur-xl bg-ocean-950/70 border-b border-white/5">
+<nav class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-2xl">sync</span>
+</div>
+<span class="font-bold text-2xl tracking-tight text-white">SkillSync</span>
+</div>
+<div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+<a class="hover:text-white transition-colors" href="index1.html">Home</a>
+<a class="hover:text-white transition-colors" href="features.html">Features</a>
+<a class="hover:text-white transition-colors" href="about.html">About Us</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="p-2 rounded-full hover:bg-white/10 transition-colors">
+</nav>
+</header>
+<main class="max-w-[1440px] mx-auto px-8 py-16 lg:py-24">
+<section class="text-center mb-24">
+<h1 class="text-5xl lg:text-7xl font-extrabold mb-8 leading-tight text-white tracking-tight">
+                Empowering Your <span class="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">Career Journey</span>
+</h1>
+<p class="text-slate-400 max-w-3xl mx-auto text-xl leading-relaxed">
+                Discover the cutting-edge features of SkillSync, architected for high-performance career growth and seamless educational transitions.
+            </p>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+<div class="space-y-12">
+<div class="max-w-xl">
+<span class="inline-block px-4 py-1.5 text-xs font-bold tracking-widest text-blue-300 uppercase bg-blue-500/10 border border-blue-500/20 rounded-full mb-6">
+                        Artificial Intelligence
+                    </span>
+<h2 class="text-4xl font-bold mb-6 text-white">AI-Powered Career Matching</h2>
+<p class="text-slate-400 mb-10 text-lg leading-relaxed">
+                        Our proprietary algorithms don't just find jobs; they discover paths. By analyzing your unique profile, our engine captures your intrinsic motivations and technical aptitudes.
+                    </p>
+<div class="space-y-6">
+<div class="glass-card p-6 rounded-2xl flex items-start gap-5">
+<div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl">psychology</span>
+</div>
+<div>
+<h3 class="font-bold text-lg text-white mb-2">Dynamic Discovery Form</h3>
+<p class="text-slate-400 text-base leading-relaxed">A neuro-science backed assessment of your cognitive strengths and behavioral traits.</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-start gap-5">
+<div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl">hub</span>
+</div>
+<div>
+<h3 class="font-bold text-lg text-white mb-2">Personalized Recommendations</h3>
+<p class="text-slate-400 text-base leading-relaxed">Tailored learning paths and role suggestions that evolve dynamically as you acquire new skills.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center justify-between mb-8">
+<div class="flex gap-2">
+<div class="h-2 w-12 bg-primary/40 rounded"></div>
+<div class="h-2 w-8 bg-white/10 rounded"></div>
+</div>
+<div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+</div>
+<div class="space-y-3 mb-8">
+<div class="h-3 w-full bg-white/5 rounded"></div>
+<div class="h-3 w-5/6 bg-white/5 rounded"></div>
+<div class="h-3 w-4/6 bg-white/5 rounded"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-primary/10 border border-primary/20 p-5 rounded-xl">
+<p class="text-xs text-primary uppercase font-bold mb-2">High Confidence</p>
+<p class="text-lg font-bold text-white">Cloud Architect</p>
+</div>
+<div class="bg-white/5 border border-white/10 p-5 rounded-xl">
+<p class="text-xs text-slate-500 uppercase font-bold mb-2">Potential Fit</p>
+<p class="text-lg font-bold text-slate-300">Data Engineer</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-12">
+<div class="max-w-xl">
+<span class="inline-block px-4 py-1.5 text-xs font-bold tracking-widest text-cyan-300 uppercase bg-cyan-500/10 border border-cyan-500/20 rounded-full mb-6">
+                        Accessibility &amp; UX
+                    </span>
+<h2 class="text-4xl font-bold mb-6 text-white">Student-Centric Design</h2>
+<p class="text-slate-400 mb-10 text-lg leading-relaxed">
+                        We believe education should be accessible and navigation should be invisible. Every interaction on SkillSync is optimized for speed, clarity, and total inclusivity.
+                    </p>
+<div class="space-y-6">
+<div class="glass-card p-6 rounded-2xl flex items-start gap-5">
+<div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-cyan-400 text-3xl">navigation</span>
+</div>
+<div>
+<h3 class="font-bold text-lg text-white mb-2">Seamless Flow</h3>
+<p class="text-slate-400 text-base leading-relaxed">Eliminating friction points between skill discovery, learning modules, and career applications.</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-start gap-5">
+<div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-cyan-400 text-3xl">universal_currency_alt</span>
+</div>
+<div>
+<h3 class="font-bold text-lg text-white mb-2">Inclusive First</h3>
+<p class="text-slate-400 text-base leading-relaxed">Built from the ground up to exceed global accessibility standards for all learners.</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-start gap-5 border-cyan-500/20">
+<div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-cyan-400 text-3xl">bolt</span>
+</div>
+<div>
+<h3 class="font-bold text-lg text-white mb-2">Rapid Onboarding</h3>
+<p class="text-slate-400 text-base leading-relaxed">Get personalized results in under 2 minutes with our streamlined data ingestion engine.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900 group">
+<img alt="SkillSync Dashboard Interface" class="w-full opacity-60 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFO9abDBJ-YRNxxmJp9hWMEeKNMTw2u1a8zJeDO9YkNPGQs1JZeI7bG9vqEAb_3ncjQuHIW123jqVkO0am_aHYM9H_madCpU1eFwFmVxuWWhMqVql45ZF1MjN54gSjWuixgTAcgwTTBn5WZ3hOcM2JoPQtPsJwXDVP9MASXM0V0H8EybP3dBfYbh302LUYylJMI_WakFWHc61JmZSaiEfRO8sUzEvpCDL0JF-0mVBnqS5Tj7h6-5Pv38ix1Zvtf8zvauqsa93fciQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-ocean-950 via-ocean-950/40 to-transparent"></div>
+<div class="absolute bottom-0 left-0 right-0 p-8">
+<p class="text-xs text-cyan-400 uppercase tracking-widest font-bold mb-2">Interface Preview</p>
+<p class="text-2xl text-white font-bold">Optimized for Professional Workflows</p>
+</div>
+</div>
+</div>
+</div>
+<section class="mt-40 text-center pb-24 glass-card p-16 rounded-[2rem] border-white/5">
+<h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">Your skills can be learned, but your passion must be explored</h2>
+<p class="text-slate-400 text-xl mb-12 max-w-2xl mx-auto"></p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+<a href="careerform1.html"> <button class="w-full sm:w-auto px-12 py-5 bg-primary text-white text-lg font-bold rounded-2xl hover:bg-blue-600 transition-all shadow-2xl shadow-primary/30 active:scale-[0.98]">
+                    Explore Now 
+                </button></a>
+
+</div>
+</section>
+</main>
+<footer class="border-t border-white/5 bg-black/60 backdrop-blur-xl py-16 px-8">
+  <div class="max-w-[1440px] mx-auto flex flex-col items-center text-center">
+    
+    <!-- Logo + Name -->
+    <div class="flex items-center gap-3 mb-6 justify-center">
+      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-xl">sync</span>
+      </div>
+      <span class="font-bold text-2xl text-white">SkillSync</span>
+    </div>
+
+    <!-- Description -->
+    <p class="text-slate-500 max-w-md mb-8 leading-relaxed">
+      Bridging the talent gap with AI-driven career pathing and student-centric educational design. Built for the future of work.
+    </p>
+
+    <!-- Copyright -->
+    
+
+  </div>
+</footer>
+</body></html>
