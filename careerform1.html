@@ -576,7 +576,7 @@
         document.getElementById('loadingOverlay').classList.add('active');
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/generate-career", {
+            const response = await fetch("https://skillsync-backend-1-9ukd.onrender.com/generate-career",, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
@@ -619,4 +619,5 @@
 </script>
 
 </body>
+
 </html>
