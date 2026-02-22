@@ -195,46 +195,61 @@
                 ...basicData,
                 assessment_answers: selections
             };
+fetch("https://skillsync-backend-1-9ukd.onrender.com/generate-final-report", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(finalPayload)
+})
+.then(async (response) => {
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error("Server Error: " + errorText);
+    }
+    return response.json();
+})
+.then(data => {
 
-            fetch("https://skillsync-backend-1-9ukd.onrender.com", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(finalPayload)
-            })
-            .then(res => res.json())
-            .then(data => {
+    console.log("Backend Response:", data);
 
-                const formatted = data.report
-                    .replace(/# (.*?)<br>/g, '<h1 style="color:#fff;font-size:26px;margin:24px 0 10px;font-family:Segoe UI;">$1</h1>')
-                    .replace(/## (.*?)<br>/g, '<h2 style="color:#00c6ff;font-size:20px;margin:20px 0 8px;border-bottom:1px solid rgba(0,198,255,0.3);padding-bottom:6px;">$1</h2>')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#e2e8f0;">$1</strong>')
-                    .replace(/• /g, '<span style="color:#00c6ff;">• </span>')
-                    .replace(/\d\. /g, (m) => `<span style="color:#00c6ff;font-weight:bold;">${m}</span>`);
+    const reportText = data.report || data.final_report || data.response;
 
-                document.body.innerHTML = `
-                    <div style="min-height:100vh; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); padding:40px 20px;">
-                        <div style="max-width:800px; margin:0 auto; background:rgba(255,255,255,0.05); border-radius:20px; padding:40px; backdrop-filter:blur(15px);">
-                            <h2 style="text-align:center; font-size:28px; color:white; margin-bottom:30px;">🎯 Your Career Recommendation</h2>
-                            <div style="font-size:16px; line-height:1.9; color:#cbd5e1; text-align:left;">
-                                ${formatted}
-                            </div>
-                            <div style="text-align:center; margin-top:40px;">
-                                <a href="index1.html" style="display:inline-block; padding:14px 32px; background:linear-gradient(90deg,#00c6ff,#0072ff); color:white; border-radius:12px; text-decoration:none; font-weight:bold; font-size:16px;">
-                                    🏠 Back to Home
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `;
+    if (!reportText) {
+        throw new Error("Invalid backend response format.");
+    }
 
-            })
-            .catch(err => {
-                // ✅ Reset button if error occurs
-                nextBtn.disabled = false;
-                nextBtn.innerText = "Get Recommendation 🚀";
-                alert("Backend error. Check FastAPI.");
-                console.error(err);
-            });
+    const formatted = reportText
+        .replace(/^# (.*$)/gim, '<h1 style="color:#fff;font-size:26px;margin:24px 0 10px;">$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2 style="color:#00c6ff;font-size:20px;margin:20px 0 8px;border-bottom:1px solid rgba(0,198,255,0.3);padding-bottom:6px;">$1</h2>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#e2e8f0;">$1</strong>')
+        .replace(/\n/g, "<br>");
+
+    document.body.innerHTML = `
+        <div style="min-height:100vh; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); padding:40px 20px;">
+            <div style="max-width:800px; margin:0 auto; background:rgba(255,255,255,0.05); border-radius:20px; padding:40px; backdrop-filter:blur(15px);">
+                <h2 style="text-align:center; font-size:28px; color:white; margin-bottom:30px;">
+                    🎯 Your Career Recommendation
+                </h2>
+                <div style="font-size:16px; line-height:1.9; color:#cbd5e1;">
+                    ${formatted}
+                </div>
+                <div style="text-align:center; margin-top:40px;">
+                    <a href="index1.html"
+                       style="display:inline-block; padding:14px 32px; background:linear-gradient(90deg,#00c6ff,#0072ff); color:white; border-radius:12px; text-decoration:none; font-weight:bold;">
+                        🏠 Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+})
+.catch(error => {
+    console.error("Error:", error);
+    nextBtn.disabled = false;
+    nextBtn.innerText = "Get Recommendation 🚀";
+    alert("Backend error. Check FastAPI logs.");
+});
         }
     }
 
@@ -253,4 +268,5 @@
 </script>
 
 </body>
+
 </html>
